@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TypeRush Arcade | Typing Challenge</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <h1 class="logo">Type<span>Rush</span> Arcade</h1>
+    <p class="tagline"> Web Technologies &middot; Lab Mid &middot; Typing Challenge Game</p>
+  </header>
+
+  <main>
+
+    <section id="home" class="screen active">
+
+      <div class="panel difficulty-box">
+        <h2>1. Choose difficulty</h2>
+        <div class="seg" id="difficultyPicker" role="group" aria-label="Difficulty">
+          <button class="seg-btn" data-level="easy" type="button">Easy</button>
+          <button class="seg-btn active" data-level="medium" type="button">Medium</button>
+          <button class="seg-btn" data-level="hard" type="button">Hard</button>
+        </div>
+        <ul class="diff-hint" id="difficultyHint"></ul>
+      </div>
+
+      <h2 class="section-title">2. Pick a game mode</h2>
+      <div class="cards">
+
+        <article class="card" id="cardBubbles">
+          <div class="card-icon">
+            <svg viewBox="0 0 64 64" width="52" height="52" aria-hidden="true">
+              <circle cx="23" cy="40" r="16" fill="rgba(0,224,192,.22)" stroke="#00e0c0" stroke-width="3"/>
+              <circle cx="46" cy="20" r="11" fill="rgba(124,92,255,.28)" stroke="#9b82ff" stroke-width="3"/>
+              <circle cx="49" cy="46" r="6" fill="rgba(255,255,255,.14)" stroke="#ffffff" stroke-width="2.5"/>
+              <path d="M13 36a11 11 0 0 1 8-8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+              <path d="M39 16a7 7 0 0 1 5-4" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>Bubbles</h3>
+          <p class="muted">Letter recognition. Bubbles float upward &mdash; press the matching letter to pop them before they reach the top.</p>
+          <ul class="rules">
+            <li>Correct key: <b>+10</b> points</li>
+            <li>Wrong key: score penalty</li>
+            <li>Bubble reaches the top = 1 miss</li>
+            <li>Game over at the miss limit</li>
+          </ul>
+          <button class="btn primary big" id="startBubbles" type="button">Start Bubbles</button>
+        </article>
+
+        <article class="card" id="cardMagnet">
+          <div class="card-icon">&#129522;</div>
+          <h3>KeyMagnet</h3>
+          <p class="muted">Keyboard precision. A target key appears &mdash; find it on the keyboard and press it as fast as you can.</p>
+          <label class="field" for="keySetSelect">Key set
+            <select id="keySetSelect">
+              <option value="home">Home row (A S D F J K L)</option>
+              <option value="top">Top row (Q-P)</option>
+              <option value="bottom">Bottom row (Z-M)</option>
+              <option value="all">All letters (A-Z)</option>
+            </select>
+          </label>
+          <ul class="rules">
+            <li>Correct key: <b>+10</b> (+5 speed bonus)</li>
+            <li>Tracks correct / incorrect / response time</li>
+            <li>Ends when the timer reaches 0</li>
+          </ul>
+          <button class="btn primary big" id="startMagnet" type="button">Start KeyMagnet</button>
+        </article>
+
+      </div>
+    </section>
+
+    <section id="game" class="screen">
+
+      <div class="game-head">
+        <div>
+          <h2 id="modeTitle">Mode</h2>
+          <span id="diffBadge" class="badge"></span>
+        </div>
+        <div class="controls">
+          <button class="btn primary" id="btnStart" type="button">Start</button>
+          <button class="btn" id="btnRestart" type="button">Restart</button>
+          <button class="btn" id="btnReset" type="button">Reset</button>
+          <button class="btn ghost" id="btnHome" type="button">Home</button>
+        </div>
+      </div>
+
+      <div class="hud" aria-label="Game status">
+        <div class="hud-item"><span class="hud-label" id="hudL1"></span><span class="hud-value" id="hudV1">0</span></div>
+        <div class="hud-item"><span class="hud-label" id="hudL2"></span><span class="hud-value" id="hudV2">0</span></div>
+        <div class="hud-item"><span class="hud-label" id="hudL3"></span><span class="hud-value" id="hudV3">0</span></div>
+        <div class="hud-item"><span class="hud-label" id="hudL4"></span><span class="hud-value" id="hudV4">0</span></div>
+      </div>
+
+      <p id="feedback" class="feedback" aria-live="polite">&nbsp;</p>
+
+      <div class="stage" id="stage">
+        <!-- Mode A -->
+        <div id="bubbleArea" class="bubble-area"></div>
+
+        <!-- Mode B -->
+        <div id="magnetArea" class="magnet-area hidden">
+          <span class="muted small">TARGET KEY</span>
+          <div id="targetLetter" class="target-letter">?</div>
+          <div class="key-timer" id="keyTimer"><div id="keyTimerFill"></div></div>
+        </div>
+
+        <!-- Shown when the game is idle (before Start / after Reset) -->
+        <div id="overlay" class="overlay">
+          <p id="overlayText">Press <b>Start</b> to begin</p>
+        </div>
+      </div>
+
+      <div id="keyboard" class="keyboard" aria-label="On-screen keyboard"></div>
+      <p class="muted small center">Use your physical keyboard or tap the on-screen keys.</p>
+    </section>
+
+    <section id="results" class="screen">
+      <div class="panel results-box">
+        <h2 id="resTitle">Game Over</h2>
+        <p class="muted" id="resReason"></p>
+        <div class="res-score"><span>Final score</span><b id="resScore">0</b></div>
+        <p id="resBest" class="best"></p>
+        <div class="res-stats" id="resStats"></div>
+        <div class="controls center-row">
+          <button class="btn primary big" id="btnPlayAgain" type="button">Play Again</button>
+          <button class="btn big" id="btnResultsHome" type="button">Home</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer muted small">Built with HTML5, CSS3 &amp; JavaScript (ES6+)</footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
